@@ -18,7 +18,7 @@ export function DashboardNav({ market }: DashboardNavProps) {
     ...(market === "pk"
       ? [{ href: "/inbox", label: "WhatsApp" }]
       : [{ href: "/inbox", label: "Inbox" }]),
-    { href: "/settings/business", label: "Settings" },
+    { href: "/settings", label: "Settings" },
   ];
 
   async function handleLogout() {
@@ -37,11 +37,18 @@ export function DashboardNav({ market }: DashboardNavProps) {
           </Link>
           <nav className="hidden items-center gap-1 sm:flex">
             {navItems.map((item) => {
-              const active = pathname.startsWith(item.href);
+              const active =
+                item.href === "/settings"
+                  ? pathname.startsWith("/settings")
+                  : pathname.startsWith(item.href);
               return (
                 <Link
                   key={item.href}
-                  href={item.href}
+                  href={
+                    item.href === "/settings"
+                      ? "/settings/business"
+                      : item.href
+                  }
                   className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
                     active
                       ? "bg-blue-50 text-blue-700"

@@ -1,14 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { OnboardingWizard } from "@/components/dashboard/OnboardingWizard";
+import { isOnboardingComplete } from "@/lib/utils/onboarding";
 import type { Business, Market } from "@/lib/supabase/types";
-
-function isOnboardingComplete(business: Business): boolean {
-  if (business.market === "pk") {
-    return !!business.whatsapp_number;
-  }
-  return business.caller_id_mode !== "unknown";
-}
 
 export default async function OnboardingPage() {
   const supabase = await createClient();
@@ -27,6 +21,13 @@ export default async function OnboardingPage() {
   const business = data as Business | null;
 
   if (business && isOnboardingComplete(business)) {
+    // US users with unverified caller ID can finish re-test in Settings → Phone
+    if (
+      business.market === "us" &&
+      business.caller_id_mode === "unknown"
+    ) {
+      redirect("/settings/number");
+    }
     redirect("/dashboard");
   }
 

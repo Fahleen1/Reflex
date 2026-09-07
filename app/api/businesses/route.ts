@@ -195,25 +195,32 @@ export async function PATCH(request: Request) {
 
   const { data: current } = await supabase
     .from("businesses")
-    .select("market")
+    .select("market, forwarding_number")
     .eq("owner_user_id", user.id)
     .maybeSingle();
 
-  const market = (current?.market ?? "us") as Market;
+  if (!current) {
+    return NextResponse.json({ error: "Business not found" }, { status: 404 });
+  }
+
+  const market = (current.market ?? "us") as Market;
   const phoneCountry = phoneCountryForMarket(market);
 
   const body = await request.json();
   const updates: BusinessUpdate = {};
+  let callerIdReset = false;
 
-  if (body.name !== undefined) updates.name = body.name;
+  if (body.name !== undefined) updates.name = String(body.name).trim();
   if (body.industry !== undefined) updates.industry = body.industry;
   if (body.timezone !== undefined) updates.timezone = body.timezone;
   if (body.business_hours !== undefined)
     updates.business_hours = body.business_hours as Json;
   if (body.message_template !== undefined)
-    updates.message_template = body.message_template;
+    updates.message_template = String(body.message_template).trim();
   if (body.missed_call_voice_message !== undefined)
-    updates.missed_call_voice_message = body.missed_call_voice_message;
+    updates.missed_call_voice_message = String(
+      body.missed_call_voice_message,
+    ).trim();
 
   if (body.forwarding_number !== undefined) {
     const normalized = formatPhone(body.forwarding_number, phoneCountry);
@@ -224,6 +231,15 @@ export async function PATCH(request: Request) {
       );
     }
     updates.forwarding_number = normalized;
+    // Spec: changing forwarding requires re-testing caller ID (US track)
+    if (
+      market === "us" &&
+      current.forwarding_number &&
+      normalized !== current.forwarding_number
+    ) {
+      updates.caller_id_mode = "unknown";
+      callerIdReset = true;
+    }
   }
 
   if (body.whatsapp_number !== undefined) {
@@ -267,5 +283,9 @@ export async function PATCH(request: Request) {
     ? buildWaMeLink(business.whatsapp_number)
     : null;
 
-  return NextResponse.json({ business, wa_me_link });
+  return NextResponse.json({
+    business,
+    wa_me_link,
+    caller_id_reset: callerIdReset,
+  });
 }

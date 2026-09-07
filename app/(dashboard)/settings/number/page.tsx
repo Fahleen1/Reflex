@@ -1,10 +1,10 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { SettingsNav } from "@/components/dashboard/SettingsNav";
-import { BusinessSettingsForm } from "@/components/dashboard/BusinessSettingsForm";
+import { NumberSettingsForm } from "@/components/dashboard/NumberSettingsForm";
 import type { Business } from "@/lib/supabase/types";
 
-export default async function BusinessSettingsPage() {
+export default async function NumberSettingsPage() {
   const supabase = await createClient();
   const {
     data: { user },
@@ -26,11 +26,11 @@ export default async function BusinessSettingsPage() {
       <div>
         <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
         <p className="mt-1 text-gray-600">
-          Manage your business profile, hours, and message templates.
+          Your CallBack number, forwarding target, and caller ID setup.
         </p>
       </div>
       <SettingsNav />
-      <BusinessSettingsForm business={business} />
+      <NumberSettingsForm business={business} />
     </div>
   );
 }

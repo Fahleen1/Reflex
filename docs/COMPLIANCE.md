@@ -36,11 +36,11 @@ Auto-texting after a missed call is generally defensible as responding to a comm
 
 ## Module 3 Gate (US track only)
 
-Do **not** ship Module 3 voice webhook SMS logic for `market = 'us'` without:
+Module 4 ships STOP/HELP/START handling via `/api/twilio/sms`. Before US production launch, still ensure:
 
-1. Opt-out handling wired up (Module 4, or minimum STOP in webhook)
-2. A2P 10DLC campaign approved (or accept filtered messages during testing)
-3. Consent notice shown during US onboarding
+1. A2P 10DLC campaign approved (or accept filtered messages during testing)
+2. Consent notice shown during US onboarding
+3. Resend configured for owner alerts (`RESEND_API_KEY`, `RESEND_FROM_EMAIL`)
 
 ## References
 

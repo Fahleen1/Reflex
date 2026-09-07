@@ -1,16 +1,24 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
-import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { WhatsAppInfoCard } from "@/components/dashboard/WhatsAppInfoCard";
+import {
+  CallLogTable,
+  type CallLogEntry,
+} from "@/components/dashboard/CallLogTable";
+import { StatsCards } from "@/components/dashboard/StatsCards";
+import {
+  computeCallStats,
+  countUndelivered,
+} from "@/lib/utils/stats";
+import { isOnboardingComplete } from "@/lib/utils/onboarding";
 import type { Business } from "@/lib/supabase/types";
 
-function isOnboardingComplete(business: Business): boolean {
-  if (business.market === "pk") {
-    return !!business.whatsapp_number;
-  }
-  return business.caller_id_mode !== "unknown";
+function weekStartIso(): string {
+  const start = new Date();
+  start.setDate(start.getDate() - 7);
+  return start.toISOString();
 }
 
 export default async function DashboardPage() {
@@ -34,6 +42,91 @@ export default async function DashboardPage() {
   }
 
   const isPk = business.market === "pk";
+  const weekStart = weekStartIso();
+
+  const { data: recentCalls } = await supabase
+    .from("calls")
+    .select(
+      "id, caller_number, status, auto_text_sent, auto_text_skipped_reason, created_at",
+    )
+    .eq("business_id", business.id)
+    .order("created_at", { ascending: false })
+    .limit(20);
+
+  const { data: weekCalls } = await supabase
+    .from("calls")
+    .select("status, auto_text_sent, auto_text_skipped_reason")
+    .eq("business_id", business.id)
+    .gte("created_at", weekStart);
+
+  const calls = (recentCalls ?? []) as CallLogEntry[];
+  const week = weekCalls ?? [];
+
+  let openConversations = 0;
+  let undelivered = 0;
+
+  if (!isPk) {
+    const { count } = await supabase
+      .from("conversations")
+      .select("id", { count: "exact", head: true })
+      .eq("business_id", business.id)
+      .eq("status", "open");
+    openConversations = count ?? 0;
+
+    const { data: conversations } = await supabase
+      .from("conversations")
+      .select("id")
+      .eq("business_id", business.id);
+
+    const conversationIds = (conversations ?? []).map((c) => c.id);
+    if (conversationIds.length > 0) {
+      const { data: messages } = await supabase
+        .from("messages")
+        .select("delivery_status")
+        .in("conversation_id", conversationIds)
+        .gte("created_at", weekStart);
+      undelivered = countUndelivered(messages ?? []);
+    }
+  }
+
+  const stats = computeCallStats(
+    week,
+    business.market,
+    openConversations,
+    undelivered,
+  );
+
+  const statCards = isPk
+    ? [
+        {
+          label: "Missed calls this week",
+          value: String(stats.missedThisWeek),
+        },
+        {
+          label: "Voice announcements (7d)",
+          value: String(stats.voiceAnnouncements),
+        },
+      ]
+    : [
+        {
+          label: "Missed calls this week",
+          value: String(stats.missedThisWeek),
+        },
+        {
+          label: "Auto-texts sent (7d)",
+          value: String(stats.autoTextsSent),
+        },
+        {
+          label: "Response rate (7d)",
+          value: stats.responseRate,
+          hint: "Auto-texts sent ÷ missed calls handled",
+        },
+        {
+          label: "Skipped / undelivered",
+          value: `${stats.autoTextsSkipped} / ${stats.undelivered}`,
+          hint: "Skipped auto-texts · failed SMS (7d)",
+        },
+      ];
 
   return (
     <div className="space-y-8">
@@ -56,31 +149,22 @@ export default async function DashboardPage() {
         />
       )}
 
-      <div className="grid gap-4 sm:grid-cols-3">
-        {[
-          { label: "Missed calls this week", value: "—" },
-          ...(isPk
-            ? [{ label: "Voice announcements played", value: "—" }]
-            : [
-                { label: "Open conversations", value: "—" },
-                { label: "Auto-texts sent", value: "—" },
-              ]),
-        ].map((stat) => (
-          <Card key={stat.label}>
-            <p className="text-sm text-gray-500">{stat.label}</p>
-            <p className="mt-1 text-3xl font-bold text-gray-900">
-              {stat.value}
-            </p>
-          </Card>
-        ))}
-      </div>
+      <StatsCards stats={statCards} />
 
-      <Card
-        title="Recent calls"
-        description="Call log will populate once Twilio voice webhooks are connected (Module 3)."
-      >
-        <p className="text-sm text-gray-500">No calls yet.</p>
-      </Card>
+      {!isPk && business.caller_id_mode === "unknown" && (
+        <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+          Caller ID is not verified — auto-texts are paused.{" "}
+          <Link
+            href="/settings/number"
+            className="font-medium underline hover:no-underline"
+          >
+            Re-verify on Phone number settings
+          </Link>
+          .
+        </div>
+      )}
+
+      <CallLogTable calls={calls} market={business.market} />
 
       <div className="flex gap-3">
         {!isPk && (
@@ -92,6 +176,9 @@ export default async function DashboardPage() {
           <Button variant={isPk ? "secondary" : "ghost"}>
             Business settings
           </Button>
+        </Link>
+        <Link href="/settings/number">
+          <Button variant="ghost">Phone number</Button>
         </Link>
       </div>
     </div>
