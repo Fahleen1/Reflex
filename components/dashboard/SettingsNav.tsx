@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 const settingsLinks = [
   { href: "/settings/business", label: "Business" },
   { href: "/settings/number", label: "Phone number" },
+  { href: "/settings/billing", label: "Billing" },
 ];
 
 export function SettingsNav() {

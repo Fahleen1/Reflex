@@ -4,6 +4,7 @@ import { formatPhone, type PhoneCountry } from "@/lib/utils/formatPhone";
 import { buildWaMeLink } from "@/lib/utils/waMeLink";
 import { provisionPhoneNumber } from "@/lib/twilio/client";
 import { DEFAULT_VOICE_MESSAGE } from "@/lib/constants/onboarding";
+import { isPaddleConfigured } from "@/lib/paddle/client";
 import type { BusinessUpdate, Json, Market } from "@/lib/supabase/types";
 
 function phoneCountryForMarket(market: Market): PhoneCountry {
@@ -142,6 +143,8 @@ export async function POST(request: Request) {
 
   const trialEndsAt = new Date();
   trialEndsAt.setDate(trialEndsAt.getDate() + 14);
+  // When Paddle is configured, trial_ends_at is mirrored from webhooks.
+  const paddleOn = isPaddleConfigured();
 
   const defaultTimezone =
     market === "pk" ? "Asia/Karachi" : "America/New_York";
@@ -160,7 +163,7 @@ export async function POST(request: Request) {
       timezone: timezone ?? defaultTimezone,
       business_hours: (business_hours ?? null) as Json,
       twilio_number: twilioNumber,
-      trial_ends_at: trialEndsAt.toISOString(),
+      trial_ends_at: paddleOn ? null : trialEndsAt.toISOString(),
       subscription_status: "trialing",
       // PK track skips caller-ID verification — passthrough marks onboarding complete
       caller_id_mode: market === "pk" ? "passthrough" : "unknown",

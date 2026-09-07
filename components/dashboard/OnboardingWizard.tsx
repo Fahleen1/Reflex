@@ -20,6 +20,7 @@ import {
 import type { BusinessHours, CallerIdMode, Market } from "@/lib/supabase/types";
 import { formatPhoneDisplay } from "@/lib/utils/formatPhone";
 import { buildWaMeLink } from "@/lib/utils/waMeLink";
+import { PaddleCheckoutButton } from "@/components/billing/PaddleCheckoutButton";
 
 type Step = 1 | 2 | 3 | 4 | 5;
 
@@ -27,6 +28,8 @@ interface OnboardingWizardProps {
   initialStep?: Step;
   initialTwilioNumber?: string | null;
   initialMarket?: Market;
+  initialBusinessId?: string | null;
+  customerEmail?: string | null;
 }
 
 interface OnboardingData {
@@ -42,6 +45,7 @@ interface OnboardingData {
   callerIdMode: CallerIdMode;
   twilioNumber: string | null;
   waMeLink: string | null;
+  businessId: string | null;
 }
 
 const US_STEPS = [
@@ -58,6 +62,8 @@ export function OnboardingWizard({
   initialStep = 1,
   initialTwilioNumber = null,
   initialMarket = "us",
+  initialBusinessId = null,
+  customerEmail = null,
 }: OnboardingWizardProps) {
   const router = useRouter();
   const [step, setStep] = useState<Step>(initialStep);
@@ -76,6 +82,7 @@ export function OnboardingWizard({
     callerIdMode: "unknown",
     twilioNumber: initialTwilioNumber,
     waMeLink: null,
+    businessId: initialBusinessId,
   });
 
   const isPk = data.market === "pk";
@@ -152,6 +159,7 @@ export function OnboardingWizard({
 
     updateField("twilioNumber", result.twilio_number);
     if (result.wa_me_link) updateField("waMeLink", result.wa_me_link);
+    if (result.business?.id) updateField("businessId", result.business.id);
     setLoading(false);
     setStep(isPk ? 5 : 4);
   }
@@ -609,14 +617,39 @@ export function OnboardingWizard({
               </p>
             )}
 
+            {data.businessId && (
+              <div className="rounded-lg border border-gray-200 p-4 space-y-3">
+                <div>
+                  <p className="font-medium text-gray-900">Start your free trial</p>
+                  <p className="mt-1 text-sm text-gray-600">
+                    Billing is handled by Paddle (14-day trial). You can manage or
+                    cancel anytime from Settings → Billing.
+                  </p>
+                </div>
+                <PaddleCheckoutButton
+                  businessId={data.businessId}
+                  customerEmail={customerEmail}
+                  className="w-full"
+                />
+              </div>
+            )}
+
             <Button
               className="w-full"
+              variant="secondary"
               onClick={() => {
-                router.push("/dashboard");
+                router.push(
+                  data.businessId &&
+                    process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN
+                    ? "/settings/billing"
+                    : "/dashboard",
+                );
                 router.refresh();
               }}
             >
-              Go to dashboard
+              {process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN
+                ? "Continue to billing"
+                : "Go to dashboard"}
             </Button>
           </div>
         </Card>

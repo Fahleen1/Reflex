@@ -10,6 +10,8 @@
     "db:types": "supabase gen types typescript --local > lib/supabase/types.ts"
   },
   "dependencies": {
+    "@paddle/paddle-js": "^1.6.5",
+    "@paddle/paddle-node-sdk": "^3.10.0",
     "@supabase/ssr": "^0.6.1",
     "@supabase/supabase-js": "^2.49.1",
     "libphonenumber-js": "^1.12.6",

@@ -76,7 +76,7 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 - **US track:** Provisions a US local number during onboarding; start [A2P 10DLC registration](docs/COMPLIANCE.md) immediately — often the launch critical path.
 - **Pakistan track:** Uses Twilio Voice for call detection only; no SMS provisioning needed.
 
-## Project status (Modules 1–5 vs spec v3.2)
+## Project status (Modules 1–6 vs spec v3.2)
 
 | Module | Status | Notes |
 |--------|--------|-------|
@@ -85,7 +85,7 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 | **3** Voice webhooks | ✅ Done | `/api/twilio/voice`, `/api/twilio/voice-status`, US auto-SMS + PK voice `<Say>`, call log on dashboard |
 | **4** SMS inbox | ✅ Done | Inbound SMS webhook, STOP/HELP/START, inbox UI, owner email alerts, delivery status |
 | **5** Settings | ✅ Done | Edit profile/hours/template, phone + caller-ID re-test, dashboard stats |
-| **6** Billing | 🔲 Pending | Paddle |
+| **6** Billing | ✅ Done | Paddle checkout, webhooks, access gating, Settings → Billing |
 | **7** Marketing | 🔲 Partial | Landing, pricing, privacy exist; SEO/demo polish pending |
 
 ### Testing Module 3 (Twilio voice webhooks)
@@ -100,6 +100,22 @@ Twilio must reach your app over HTTPS. For local dev, use [ngrok](https://ngrok.
 5. Check **Twilio Debugger** for webhook requests and the dashboard **Recent calls** table.
 
 **US SMS** also requires `TWILIO_MESSAGING_SERVICE_SID` and A2P 10DLC approval. Voice + call logging works without 10DLC.
+
+### Paddle billing setup (Module 6)
+
+1. Create a Paddle **sandbox** account and a product with a monthly price that includes a **14-day trial**.
+2. Copy into `.env.local`:
+   ```env
+   PADDLE_API_KEY=...
+   PADDLE_WEBHOOK_SECRET=...          # from Developer Tools → Notifications
+   NEXT_PUBLIC_PADDLE_CLIENT_TOKEN=...
+   NEXT_PUBLIC_PADDLE_PRICE_ID=pri_...
+   NEXT_PUBLIC_PADDLE_ENV=sandbox
+   ```
+3. Add a notification destination webhook URL: `{NEXT_PUBLIC_APP_URL}/api/paddle/webhook`  
+   Subscribe to `subscription.created`, `subscription.updated`, `subscription.canceled`, `subscription.past_due`.
+4. Ensure the price’s checkout passes `custom_data.business_id` (the app sets this automatically).
+5. Until these env vars are set, billing gating is **disabled** so local Module 1–5 testing still works.
 
 ### Module 1 checklist (spec)
 
@@ -117,6 +133,15 @@ Twilio must reach your app over HTTPS. For local dev, use [ngrok](https://ngrok.
 - [x] Save to `businesses` (`market`, `whatsapp_number`, `missed_call_voice_message`)
 - [x] Dashboard: hide SMS inbox for PK; show WhatsApp info card
 - [ ] **Manual:** US test call to confirm `caller_id_mode` before relying on auto-text
+
+### Module 6 checklist (spec v3.2)
+
+- [x] Paddle checkout during onboarding (after business profile)
+- [x] `/api/paddle/webhook` — signature verify, idempotent `billing_events`, subscription sync
+- [x] Access gating via `subscription_status` + `paddle_subscription_id`
+- [x] Settings → Billing (status, checkout, customer portal)
+- [x] Pricing page notes Paddle trial
+- [ ] **Manual:** Create Paddle sandbox product/price with 14-day trial; set env vars; point webhook to `{APP_URL}/api/paddle/webhook`
 
 ### Module 5 checklist (spec v3.2)
 
@@ -145,8 +170,8 @@ Twilio must reach your app over HTTPS. For local dev, use [ngrok](https://ngrok.
 
 ### Not yet built (deferred to later modules)
 
-- `settings/billing` page (Module 6)
-- Sentry, Paddle integration
+- Marketing site polish / SEO (Module 7)
+- Sentry
 - `supabase/seed.sql`
 ## Docs
 

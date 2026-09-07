@@ -19,7 +19,7 @@ export default function PricingPage() {
         <div className="text-center">
           <h1 className="text-3xl font-bold text-gray-900">Simple pricing</h1>
           <p className="mt-2 text-gray-600">
-            One plan. Everything included. 14-day free trial.
+            One plan. Everything included. 14-day free trial via Paddle.
           </p>
         </div>
 
@@ -31,8 +31,8 @@ export default function PricingPage() {
               <span className="text-gray-500">/month</span>
             </p>
             <ul className="mt-6 space-y-3 text-sm text-gray-600">
-              <li>Unlimited missed-call auto-texts</li>
-              <li>SMS inbox with reply</li>
+              <li>Unlimited missed-call auto-texts (US) or WhatsApp voice pointers (PK)</li>
+              <li>SMS inbox with reply (US track)</li>
               <li>Dedicated business phone number</li>
               <li>Email alerts on new replies</li>
               <li>Call log &amp; basic stats</li>
@@ -43,7 +43,8 @@ export default function PricingPage() {
               </Button>
             </Link>
             <p className="mt-3 text-center text-xs text-gray-500">
-              No credit card required during trial. Cancel anytime.
+              Trial and billing run through Paddle (Merchant of Record). Cancel
+              anytime from Settings → Billing.
             </p>
           </div>
         </div>

@@ -21,7 +21,6 @@ export default async function OnboardingPage() {
   const business = data as Business | null;
 
   if (business && isOnboardingComplete(business)) {
-    // US users with unverified caller ID can finish re-test in Settings → Phone
     if (
       business.market === "us" &&
       business.caller_id_mode === "unknown"
@@ -54,6 +53,8 @@ export default async function OnboardingPage() {
         initialStep={initialStep}
         initialTwilioNumber={business?.twilio_number ?? null}
         initialMarket={(business?.market ?? "us") as Market}
+        initialBusinessId={business?.id ?? null}
+        customerEmail={user.email}
       />
     </div>
   );
