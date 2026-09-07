@@ -18,7 +18,7 @@ interface CallLogTableProps {
 
 const SKIP_REASON_LABELS: Record<string, string> = {
   caller_id_unavailable:
-    "Caller ID unavailable — auto-text could not identify the caller. Consider advertising your CallBack number directly instead of carrier forwarding.",
+    "Caller ID unavailable — auto-text could not identify the caller. Consider advertising your Reflex number directly instead of carrier forwarding.",
   opted_out: "Caller opted out of automated messages.",
   cooldown_active: "Skipped — caller was already auto-texted within the last 30 minutes.",
 };

@@ -17,5 +17,5 @@ export function classifyInboundSms(body: string): SmsKeywordType | null {
 export function getHelpReplyMessage(): string {
   const supportEmail =
     process.env.SUPPORT_EMAIL ?? process.env.RESEND_FROM_EMAIL ?? "support@callback.app";
-  return `CallBack support: email ${supportEmail} for help with missed-call texts. Reply STOP to opt out.`;
+  return `Reflex support: email ${supportEmail} for help with missed-call texts. Reply STOP to opt out.`;
 }

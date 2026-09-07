@@ -287,7 +287,7 @@ export function OnboardingWizard({
               value={data.forwardingNumber}
               onChange={(e) => updateField("forwardingNumber", e.target.value)}
               placeholder="(555) 123-4567"
-              hint="Calls to your CallBack number will ring this phone. US numbers (+1)."
+              hint="Calls to your Reflex number will ring this phone. US numbers (+1)."
               required
             />
             <div className="rounded-lg bg-amber-50 p-4 text-sm text-amber-800">
@@ -338,7 +338,7 @@ export function OnboardingWizard({
               value={data.forwardingNumber}
               onChange={(e) => updateField("forwardingNumber", e.target.value)}
               placeholder="0300 1234567"
-              hint="Calls to your CallBack number will ring this phone."
+              hint="Calls to your Reflex number will ring this phone."
               required
             />
             <Input
@@ -465,7 +465,7 @@ export function OnboardingWizard({
             {data.twilioNumber ? (
               <div className="rounded-lg bg-blue-50 p-4">
                 <p className="text-sm font-medium text-blue-900">
-                  Your CallBack number
+                  Your Reflex number
                 </p>
                 <p className="mt-1 text-2xl font-bold text-blue-700">
                   {formatPhoneDisplay(data.twilioNumber)}
@@ -480,7 +480,7 @@ export function OnboardingWizard({
             <div className="space-y-2 text-sm text-gray-700">
               <p className="font-medium">How to test:</p>
               <ol className="list-inside list-decimal space-y-1 text-gray-600">
-                <li>From a different phone, call your CallBack number above.</li>
+                <li>From a different phone, call your Reflex number above.</li>
                 <li>Let it ring — don&apos;t answer on the forwarded line.</li>
                 <li>Check what caller ID appeared in the Twilio webhook.</li>
                 <li>Select the result below.</li>
@@ -590,11 +590,11 @@ export function OnboardingWizard({
                   <p className="font-medium">Setup instructions:</p>
                   <ul className="list-inside list-disc space-y-2 text-gray-600">
                     <li>
-                      <strong>Recommended:</strong> Use your CallBack number on
+                      <strong>Recommended:</strong> Use your Reflex number on
                       Google, your website, and business cards.
                     </li>
                     <li>
-                      When a call is missed, CallBack automatically texts the
+                      When a call is missed, Reflex automatically texts the
                       caller (Module 3).
                     </li>
                   </ul>
@@ -604,7 +604,7 @@ export function OnboardingWizard({
                     <p className="font-medium">Caller ID limitation</p>
                     <p className="mt-1">
                       Auto-text requires the real caller&apos;s number. Consider
-                      advertising your CallBack number directly.
+                      advertising your Reflex number directly.
                     </p>
                   </div>
                 )}

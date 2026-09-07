@@ -1,4 +1,4 @@
-# CallBack — Missed Call Text-Back SaaS
+# Reflex — Missed Call Text-Back SaaS
 
 Never lose a missed call lead. Automatically reach callers when you can't pick up — via **SMS (US)** or **WhatsApp voice pointer (Pakistan)**.
 
@@ -76,7 +76,7 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 - **US track:** Provisions a US local number during onboarding; start [A2P 10DLC registration](docs/COMPLIANCE.md) immediately — often the launch critical path.
 - **Pakistan track:** Uses Twilio Voice for call detection only; no SMS provisioning needed.
 
-## Project status (Modules 1–6 vs spec v3.2)
+## Project status (Modules 1–7 vs spec v3.2)
 
 | Module | Status | Notes |
 |--------|--------|-------|
@@ -86,7 +86,7 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 | **4** SMS inbox | ✅ Done | Inbound SMS webhook, STOP/HELP/START, inbox UI, owner email alerts, delivery status |
 | **5** Settings | ✅ Done | Edit profile/hours/template, phone + caller-ID re-test, dashboard stats |
 | **6** Billing | ✅ Done | Paddle checkout, webhooks, access gating, Settings → Billing |
-| **7** Marketing | 🔲 Partial | Landing, pricing, privacy exist; SEO/demo polish pending |
+| **7** Marketing | ✅ Done | Invofy-style landing (Reflex brand, blue–purple gradients, chat demo), pricing, privacy, SEO/OG |
 
 ### Testing Module 3 (Twilio voice webhooks)
 
@@ -168,11 +168,18 @@ Twilio must reach your app over HTTPS. For local dev, use [ngrok](https://ngrok.
 - [x] Dashboard call log with skip reasons
 - [ ] **Manual:** Configure Twilio voice webhook URL + end-to-end test call
 
-### Not yet built (deferred to later modules)
+### Module 7 checklist (spec v3.2)
 
-- Marketing site polish / SEO (Module 7)
+- [x] Landing — headline, problem/solution, animated demo, CTA to trial
+- [x] Pricing page (`/pricing`)
+- [x] Privacy policy with SMS consent / STOP / HELP (`/privacy`)
+- [x] Basic SEO — meta tags, Open Graph image (`/opengraph-image`)
+
+### Not yet built (deferred)
+
 - Sentry
 - `supabase/seed.sql`
+- Module 8 post-MVP nice-to-haves (see [PROJECT_SPEC](docs/PROJECT_SPEC.md))
 ## Docs
 
 | File | Purpose |

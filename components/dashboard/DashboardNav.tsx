@@ -32,8 +32,8 @@ export function DashboardNav({ market }: DashboardNavProps) {
     <header className="border-b border-gray-200 bg-white">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
         <div className="flex items-center gap-8">
-          <Link href="/dashboard" className="text-lg font-bold text-blue-600">
-            CallBack
+          <Link href="/dashboard" className="text-lg font-bold text-indigo-600">
+            Reflex
           </Link>
           <nav className="hidden items-center gap-1 sm:flex">
             {navItems.map((item) => {

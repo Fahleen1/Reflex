@@ -1,54 +1,33 @@
-import Link from "next/link";
-import { Button } from "@/components/ui/Button";
+import type { Metadata } from "next";
+import { PricingTable } from "@/components/marketing/PricingTable";
+import { MeshGradient } from "@/components/marketing/Decor";
+
+export const metadata: Metadata = {
+  title: "Pricing",
+  description:
+    "Reflex Pro — $49/month. Unlimited missed-call follow-up for US and Pakistan. 14-day free trial.",
+};
 
 export default function PricingPage() {
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="border-b border-gray-200 bg-white">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
-          <Link href="/" className="text-xl font-bold text-blue-600">
-            CallBack
-          </Link>
-          <Link href="/signup">
-            <Button size="sm">Start free trial</Button>
-          </Link>
-        </div>
-      </header>
-
-      <main className="mx-auto max-w-6xl px-4 py-20">
-        <div className="text-center">
-          <h1 className="text-3xl font-bold text-gray-900">Simple pricing</h1>
-          <p className="mt-2 text-gray-600">
+    <main className="relative overflow-hidden py-16 sm:py-24">
+      <MeshGradient />
+      <div className="relative mx-auto max-w-6xl px-4">
+        <div className="mx-auto max-w-2xl text-center">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+            Flexible options
+          </p>
+          <h1 className="mt-3 text-3xl font-bold tracking-tight text-slate-950 sm:text-5xl">
+            Start free, upgrade anytime
+          </h1>
+          <p className="mt-4 text-slate-600">
             One plan. Everything included. 14-day free trial via Paddle.
           </p>
         </div>
-
-        <div className="mx-auto mt-12 max-w-md">
-          <div className="rounded-2xl border border-gray-200 bg-white p-8 shadow-sm">
-            <p className="text-sm font-medium text-blue-600">Pro</p>
-            <p className="mt-2">
-              <span className="text-4xl font-bold text-gray-900">$49</span>
-              <span className="text-gray-500">/month</span>
-            </p>
-            <ul className="mt-6 space-y-3 text-sm text-gray-600">
-              <li>Unlimited missed-call auto-texts (US) or WhatsApp voice pointers (PK)</li>
-              <li>SMS inbox with reply (US track)</li>
-              <li>Dedicated business phone number</li>
-              <li>Email alerts on new replies</li>
-              <li>Call log &amp; basic stats</li>
-            </ul>
-            <Link href="/signup" className="mt-8 block">
-              <Button className="w-full" size="lg">
-                Start 14-day free trial
-              </Button>
-            </Link>
-            <p className="mt-3 text-center text-xs text-gray-500">
-              Trial and billing run through Paddle (Merchant of Record). Cancel
-              anytime from Settings → Billing.
-            </p>
-          </div>
+        <div className="mt-12">
+          <PricingTable />
         </div>
-      </main>
-    </div>
+      </div>
+    </main>
   );
 }

@@ -26,7 +26,7 @@ export default async function NumberSettingsPage() {
       <div>
         <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
         <p className="mt-1 text-gray-600">
-          Your CallBack number, forwarding target, and caller ID setup.
+          Your Reflex number, forwarding target, and caller ID setup.
         </p>
       </div>
       <SettingsNav />

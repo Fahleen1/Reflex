@@ -93,7 +93,7 @@ export function NumberSettingsForm({ business }: NumberSettingsFormProps) {
   return (
     <div className="space-y-6">
       <Card
-        title="Your CallBack number"
+        title="Your Reflex number"
         description="Advertise this number on Google, your website, and business cards."
       >
         <p className="text-2xl font-bold text-blue-700">
@@ -124,7 +124,7 @@ export function NumberSettingsForm({ business }: NumberSettingsFormProps) {
 
       <Card
         title="Forwarding number"
-        description="Calls to your CallBack number ring this phone. Disable voicemail on this line for reliable missed-call detection."
+        description="Calls to your Reflex number ring this phone. Disable voicemail on this line for reliable missed-call detection."
       >
         <form onSubmit={saveForwarding} className="space-y-4">
           <Input
@@ -150,13 +150,13 @@ export function NumberSettingsForm({ business }: NumberSettingsFormProps) {
           title="Caller ID verification"
           description={
             needsCallerIdRetest || business.caller_id_mode === "unknown"
-              ? "Place a test call to your CallBack number, then select what caller ID appeared."
+              ? "Place a test call to your Reflex number, then select what caller ID appeared."
               : "Current mode based on your last test. Re-verify if you change carriers or forwarding."
           }
         >
           {(needsCallerIdRetest || business.caller_id_mode === "unknown") && (
             <div className="mb-4 rounded-lg bg-amber-50 p-3 text-sm text-amber-800">
-              Auto-text requires a confirmed caller ID mode. Call your CallBack
+              Auto-text requires a confirmed caller ID mode. Call your Reflex
               number from another phone, don&apos;t answer, then select the
               result below.
             </div>
