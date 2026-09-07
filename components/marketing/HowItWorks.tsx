@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ChatCard } from "@/components/marketing/ChatCard";
+import { InboxCard } from "@/components/marketing/InboxCard";
 
 const steps = [
   {
@@ -37,12 +37,7 @@ export function HowItWorks() {
         </div>
 
         <div className="mt-14 grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
-          <div className="relative">
-            <div className="absolute inset-6 rounded-[2.5rem] bg-gradient-to-br from-sky-300 via-indigo-400 to-violet-500 opacity-90" />
-            <div className="relative p-6 sm:p-10">
-              <ChatCard className="mx-auto max-w-sm" />
-            </div>
-          </div>
+          <InboxCard className="w-full max-w-lg justify-self-center lg:max-w-none" />
 
           <div className="space-y-4">
             {steps.map((step) => (

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ChatCard } from "@/components/marketing/ChatCard";
+import { StatsCard } from "@/components/marketing/StatsCard";
 
 const faqs = [
   {
@@ -9,7 +9,7 @@ const faqs = [
     a: "Calls hit your Reflex number and forward to your phone. If there's no answer, our Twilio voice webhook triggers the follow-up for your market track.",
   },
   {
-    q: "What’s the difference between US and Pakistan?",
+    q: "What's the difference between US and Pakistan?",
     a: "US businesses get an automatic SMS plus an inbox for replies. Pakistan businesses play a short voice message that points callers to your WhatsApp number.",
   },
   {
@@ -42,9 +42,7 @@ export function Faq() {
         </div>
 
         <div className="mt-14 grid items-stretch gap-8 lg:grid-cols-2">
-          <div className="relative flex items-center justify-center overflow-hidden rounded-[2rem] bg-gradient-to-br from-sky-300 via-indigo-400 to-violet-500 p-8 sm:p-12">
-            <ChatCard className="w-full max-w-sm" />
-          </div>
+          <StatsCard className="min-h-full" />
 
           <div className="space-y-3">
             {faqs.map((item, i) => {
