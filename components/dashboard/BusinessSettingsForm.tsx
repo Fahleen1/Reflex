@@ -157,7 +157,7 @@ export function BusinessSettingsForm({ business }: BusinessSettingsFormProps) {
               onChange={(e) => setMessageTemplate(e.target.value)}
               rows={4}
               required
-              className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="block w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm shadow-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400"
             />
             <p className="text-xs text-gray-500">
               Available placeholder:{" "}
@@ -189,7 +189,7 @@ export function BusinessSettingsForm({ business }: BusinessSettingsFormProps) {
                   href={waMeLink}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="break-all text-blue-600 hover:underline"
+                  className="break-all text-slate-950 hover:underline"
                 >
                   {waMeLink}
                 </a>
@@ -204,7 +204,7 @@ export function BusinessSettingsForm({ business }: BusinessSettingsFormProps) {
                 onChange={(e) => setVoiceMessage(e.target.value)}
                 rows={3}
                 required
-                className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="block w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm shadow-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400"
               />
             </div>
           </div>

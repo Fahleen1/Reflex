@@ -22,7 +22,7 @@ export function SettingsNav() {
             href={link.href}
             className={`-mb-px border-b-2 px-3 py-2 text-sm font-medium transition-colors ${
               active
-                ? "border-blue-600 text-blue-700"
+                ? "border-slate-950 text-slate-950"
                 : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-800"
             }`}
           >

@@ -202,16 +202,16 @@ export function OnboardingWizard({
                 <div
                   className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium ${
                     done
-                      ? "bg-blue-600 text-white"
+                      ? "bg-slate-950 text-white"
                       : active
-                        ? "border-2 border-blue-600 text-blue-600"
+                        ? "border-2 border-slate-950 text-slate-950"
                         : "border-2 border-gray-200 text-gray-400"
                   }`}
                 >
                   {done ? "✓" : stepNum}
                 </div>
                 <span
-                  className={`mt-1 hidden text-xs sm:block ${active ? "font-medium text-blue-600" : "text-gray-400"}`}
+                  className={`mt-1 hidden text-xs sm:block ${active ? "font-medium text-slate-950" : "text-gray-400"}`}
                 >
                   {label}
                 </span>
@@ -222,7 +222,7 @@ export function OnboardingWizard({
       </div>
 
       {error && (
-        <div className="mb-4 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div className="mb-4 rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-700">
           {error}
         </div>
       )}
@@ -290,14 +290,14 @@ export function OnboardingWizard({
               hint="Calls to your Reflex number will ring this phone. US numbers (+1)."
               required
             />
-            <div className="rounded-lg bg-amber-50 p-4 text-sm text-amber-800">
+            <div className="rounded-2xl bg-amber-50 p-4 text-sm text-amber-800">
               <p className="font-medium">Important: disable voicemail</p>
               <p className="mt-1">
                 If your forwarding line has voicemail, missed calls may be
                 treated as &quot;answered&quot; and no auto-text will be sent.
               </p>
             </div>
-            <div className="rounded-lg border border-gray-200 p-4">
+            <div className="rounded-2xl border border-slate-200 p-4">
               <label className="flex items-start gap-3">
                 <input
                   type="checkbox"
@@ -358,13 +358,13 @@ export function OnboardingWizard({
                 value={data.voiceMessage}
                 onChange={(e) => updateField("voiceMessage", e.target.value)}
                 rows={3}
-                className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="block w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm shadow-sm focus:border-slate-950 focus:outline-none focus:ring-2 focus:ring-indigo-400"
               />
               <p className="text-xs text-gray-500">
                 Read aloud to callers when you don&apos;t answer. Mention WhatsApp.
               </p>
             </div>
-            <div className="rounded-lg bg-amber-50 p-4 text-sm text-amber-800">
+            <div className="rounded-2xl bg-amber-50 p-4 text-sm text-amber-800">
               <p className="font-medium">Disable voicemail on your forwarding line</p>
               <p className="mt-1">
                 Voicemail may count as &quot;answered&quot;, preventing the voice
@@ -463,16 +463,16 @@ export function OnboardingWizard({
         >
           <div className="space-y-4">
             {data.twilioNumber ? (
-              <div className="rounded-lg bg-blue-50 p-4">
-                <p className="text-sm font-medium text-blue-900">
+              <div className="rounded-lg bg-slate-100 p-4">
+                <p className="text-sm font-medium text-slate-900">
                   Your Reflex number
                 </p>
-                <p className="mt-1 text-2xl font-bold text-blue-700">
+                <p className="mt-1 text-2xl font-bold text-slate-800">
                   {formatPhoneDisplay(data.twilioNumber)}
                 </p>
               </div>
             ) : (
-              <div className="rounded-lg bg-amber-50 p-4 text-sm text-amber-800">
+              <div className="rounded-2xl bg-amber-50 p-4 text-sm text-amber-800">
                 Twilio is not configured — no number was provisioned. Add Twilio
                 credentials to your environment and re-run onboarding.
               </div>
@@ -490,9 +490,9 @@ export function OnboardingWizard({
               {CALLER_ID_MODES.map((mode) => (
                 <label
                   key={mode.value}
-                  className={`flex cursor-pointer items-start gap-3 rounded-lg border p-4 transition-colors ${
+                  className={`flex cursor-pointer items-start gap-3 rounded-2xl border p-4 transition-colors ${
                     data.callerIdMode === mode.value
-                      ? "border-blue-500 bg-blue-50"
+                      ? "border-slate-950 bg-slate-100"
                       : "border-gray-200 hover:border-gray-300"
                   }`}
                 >
@@ -532,7 +532,7 @@ export function OnboardingWizard({
           <div className="space-y-4">
             {isPk && data.waMeLink && (
               <>
-                <div className="rounded-lg bg-green-50 p-4">
+                <div className="rounded-2xl bg-green-50 p-4">
                   <p className="text-sm font-medium text-green-900">
                     Your WhatsApp click-to-chat link
                   </p>
@@ -550,7 +550,7 @@ export function OnboardingWizard({
                     </p>
                   )}
                 </div>
-                <div className="rounded-lg bg-blue-50 p-4 text-sm text-blue-900">
+                <div className="rounded-lg bg-slate-100 p-4 text-sm text-slate-900">
                   <p className="font-medium">Add this to your Google Business Profile</p>
                   <p className="mt-1">
                     Paste your WhatsApp link on Google, your website, and signage so
@@ -561,7 +561,7 @@ export function OnboardingWizard({
             )}
 
             {!isPk && data.twilioNumber && (
-              <div className="rounded-lg bg-green-50 p-4">
+              <div className="rounded-2xl bg-green-50 p-4">
                 <p className="text-sm font-medium text-green-900">
                   Your business number
                 </p>
@@ -572,7 +572,7 @@ export function OnboardingWizard({
             )}
 
             {isPk && data.twilioNumber && (
-              <div className="rounded-lg bg-gray-50 p-4 text-sm">
+              <div className="rounded-2xl bg-slate-50 p-4 text-sm">
                 <p className="font-medium text-gray-900">Call detection number</p>
                 <p className="mt-1 text-gray-700">
                   {formatPhoneDisplay(data.twilioNumber)}
@@ -600,7 +600,7 @@ export function OnboardingWizard({
                   </ul>
                 </div>
                 {data.callerIdMode !== "passthrough" && (
-                  <div className="rounded-lg bg-amber-50 p-4 text-sm text-amber-800">
+                  <div className="rounded-2xl bg-amber-50 p-4 text-sm text-amber-800">
                     <p className="font-medium">Caller ID limitation</p>
                     <p className="mt-1">
                       Auto-text requires the real caller&apos;s number. Consider
@@ -618,7 +618,7 @@ export function OnboardingWizard({
             )}
 
             {data.businessId && (
-              <div className="rounded-lg border border-gray-200 p-4 space-y-3">
+              <div className="rounded-2xl border border-slate-200 p-4 space-y-3">
                 <div>
                   <p className="font-medium text-gray-900">Start your free trial</p>
                   <p className="mt-1 text-sm text-gray-600">

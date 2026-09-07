@@ -52,7 +52,7 @@ export function ConversationList({
               <Link
                 href={`/inbox?c=${conversation.id}`}
                 className={`block px-4 py-3 transition-colors hover:bg-gray-50 ${
-                  active ? "bg-blue-50" : ""
+                  active ? "bg-slate-100" : ""
                 }`}
               >
                 <div className="flex items-start justify-between gap-2">

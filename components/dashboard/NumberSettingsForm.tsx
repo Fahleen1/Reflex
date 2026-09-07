@@ -96,7 +96,7 @@ export function NumberSettingsForm({ business }: NumberSettingsFormProps) {
         title="Your Reflex number"
         description="Advertise this number on Google, your website, and business cards."
       >
-        <p className="text-2xl font-bold text-blue-700">
+        <p className="text-2xl font-bold text-slate-800">
           {business.twilio_number
             ? formatPhoneDisplay(business.twilio_number)
             : "Not provisioned yet"}
@@ -168,7 +168,7 @@ export function NumberSettingsForm({ business }: NumberSettingsFormProps) {
                 key={mode.value}
                 className={`flex cursor-pointer items-start gap-3 rounded-lg border p-4 transition-colors ${
                   callerIdMode === mode.value
-                    ? "border-blue-500 bg-blue-50"
+                    ? "border-slate-950 bg-slate-100"
                     : "border-gray-200 hover:border-gray-300"
                 }`}
               >

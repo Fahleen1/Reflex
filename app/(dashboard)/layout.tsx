@@ -31,7 +31,7 @@ export default async function DashboardLayout({
   > | null;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white font-[family-name:var(--font-marketing)] text-slate-900 antialiased">
       <DashboardNav market={business?.market ?? null} />
       <SubscriptionGuard
         billingRequired={isPaddleConfigured()}

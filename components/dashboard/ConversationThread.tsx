@@ -99,14 +99,14 @@ export function ConversationThread({
                 <div
                   className={`max-w-[80%] rounded-2xl px-4 py-2 text-sm ${
                     isOutbound
-                      ? "bg-blue-600 text-white"
+                      ? "bg-slate-950 text-white"
                       : "bg-gray-100 text-gray-900"
                   }`}
                 >
                   <p className="whitespace-pre-wrap">{message.body}</p>
                   <p
                     className={`mt-1 text-xs ${
-                      isOutbound ? "text-blue-100" : "text-gray-500"
+                      isOutbound ? "text-slate-200" : "text-gray-500"
                     }`}
                   >
                     {formatTime(message.created_at)}
@@ -137,7 +137,7 @@ export function ConversationThread({
               optedOut ? "Caller has opted out" : "Type your reply…"
             }
             disabled={optedOut || loading}
-            className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-50"
+            className="flex-1 rounded-2xl border border-slate-200 px-3 py-2 text-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400 disabled:bg-gray-50"
           />
           <Button type="submit" disabled={optedOut || loading || !reply.trim()}>
             Send

@@ -78,7 +78,7 @@ export function WhatsAppInfoCard({
         )}
 
         {showGooglePrompt && (
-          <div className="rounded-lg bg-blue-50 p-4 text-sm text-blue-900">
+          <div className="rounded-lg bg-slate-100 p-4 text-sm text-slate-900">
             <p className="font-medium">Add this to your Google Business Profile</p>
             <p className="mt-1">
               Paste your WhatsApp link in your Google listing, website, and signage

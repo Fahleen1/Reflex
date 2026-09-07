@@ -29,10 +29,13 @@ export function DashboardNav({ market }: DashboardNavProps) {
   }
 
   return (
-    <header className="border-b border-gray-200 bg-white">
+    <header className="border-b border-slate-200/80 bg-white/80 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
         <div className="flex items-center gap-8">
-          <Link href="/dashboard" className="text-lg font-bold text-indigo-600">
+          <Link
+            href="/dashboard"
+            className="text-lg font-bold tracking-tight text-slate-950"
+          >
             Reflex
           </Link>
           <nav className="hidden items-center gap-1 sm:flex">
@@ -49,10 +52,10 @@ export function DashboardNav({ market }: DashboardNavProps) {
                       ? "/settings/business"
                       : item.href
                   }
-                  className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+                  className={`rounded-full px-3.5 py-2 text-sm font-medium transition-colors ${
                     active
-                      ? "bg-blue-50 text-blue-700"
-                      : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                      ? "bg-slate-950 text-white"
+                      : "text-slate-600 hover:bg-slate-100 hover:text-slate-950"
                   }`}
                 >
                   {item.label}
@@ -62,8 +65,9 @@ export function DashboardNav({ market }: DashboardNavProps) {
           </nav>
         </div>
         <button
+          type="button"
           onClick={handleLogout}
-          className="text-sm text-gray-500 hover:text-gray-700"
+          className="text-sm font-medium text-slate-500 hover:text-slate-950"
         >
           Sign out
         </button>
