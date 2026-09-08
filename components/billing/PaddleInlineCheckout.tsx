@@ -52,7 +52,7 @@ function loadInlinePaddle(
         settings: {
           displayMode: "inline",
           frameTarget: FRAME_TARGET,
-          frameInitialHeight: "720",
+          frameInitialHeight: 720,
           frameStyle:
             "width: 100%; min-width: 312px; background-color: transparent; border: none;",
           theme: "light",
