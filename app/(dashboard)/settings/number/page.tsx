@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { SettingsNav } from "@/components/dashboard/SettingsNav";
 import { NumberSettingsForm } from "@/components/dashboard/NumberSettingsForm";
+import { isMockTelephonyEnabled } from "@/lib/telephony/config";
 import type { Business } from "@/lib/supabase/types";
 
 export default async function NumberSettingsPage() {
@@ -29,7 +30,7 @@ export default async function NumberSettingsPage() {
           Your Reflex number, forwarding target, and caller ID setup.
         </p>
       </div>
-      <SettingsNav />
+      <SettingsNav showSimulator={isMockTelephonyEnabled()} />
       <NumberSettingsForm business={business} />
     </div>
   );

@@ -9,12 +9,20 @@ const settingsLinks = [
   { href: "/settings/billing", label: "Billing" },
 ];
 
-export function SettingsNav() {
+interface SettingsNavProps {
+  showSimulator?: boolean;
+}
+
+export function SettingsNav({ showSimulator = false }: SettingsNavProps) {
   const pathname = usePathname();
+
+  const links = showSimulator
+    ? [...settingsLinks, { href: "/settings/simulator", label: "Simulator" }]
+    : settingsLinks;
 
   return (
     <nav className="flex gap-1 border-b border-gray-200 pb-px">
-      {settingsLinks.map((link) => {
+      {links.map((link) => {
         const active = pathname.startsWith(link.href);
         return (
           <Link

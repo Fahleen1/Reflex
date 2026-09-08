@@ -49,7 +49,7 @@ This is not optional if you're texting US phone numbers. Skipping it risks block
 **Consent (TCPA)**
 - Auto-texting someone right after they called your customer's business is generally defensible as responding within an existing communication the caller initiated — but you still need real guardrails, not just an assumption:
   - Handle **STOP / UNSUBSCRIBE / CANCEL** and **HELP** as inbound keywords, per standard carrier requirements — Twilio's Advanced Opt-Out can handle this automatically if enabled; don't rely on it silently, log it into your own `opted_out` field too (see schema).
-  - Once a number opts out, **never auto-text it again** for any business, until it opts back in (`START`/`UNSTOP`).
+  - Once a caller opts out, **never auto-text them again for that business** until they reply `START`/`UNSTOP`. Opt-out is per business (see `conversations.opted_out`), not global across all tenants.
   - Show a short consent/notice line during business onboarding (e.g. "By using this service you agree your customers may receive an automated text after a missed call") and link a basic privacy policy on your marketing site before launch.
 
 **Message content**
@@ -88,8 +88,9 @@ alter table businesses add column market text default 'us' check (market in ('us
 alter table businesses add column whatsapp_number text; -- E.164, used to generate wa.me links; only relevant when market = 'pk'
 alter table businesses add column missed_call_voice_message text default 'Sorry we couldn''t take your call. Please message us on WhatsApp and we''ll get right back to you.';
 ```
-- For `market = 'pk'` businesses: Modules 3-4's SMS logic is simply skipped. The voice webhook (`/api/twilio/voice`) branches on `businesses.market` — if `'pk'`, play `missed_call_voice_message` via `<Say>` instead of (or in addition to) attempting the SMS/conversation flow.
-- The `calls`, `conversations`, and `messages` tables remain unused for `market = 'pk'` businesses in v1 — there's no reply channel for your system to capture, since replies happen in the business owner's personal WhatsApp app.
+- For `market = 'pk'` businesses: Modules 3–4's SMS logic is skipped. The voice webhook (`/api/twilio/voice`) branches on `businesses.market` — if `'pk'`, play `missed_call_voice_message` via `<Say>` instead of attempting SMS/conversation flow.
+- **`calls` are logged for PK businesses** when a voice route (Twilio number + forwarding) exists or when using the mock simulator. **`conversations` and `messages` remain unused** for PK in v1 — replies happen in the owner's WhatsApp app.
+- Automatic missed-call detection requires a **voice route** (Twilio number with call forwarding). A bare business SIM or `wa.me` link alone cannot detect missed calls.
 
 **Dashboard changes for Pakistan-track businesses:**
 - Onboarding: ask for `whatsapp_number` instead of setting up SMS message templates; show the generated `wa.me` link and a copy-able "Add this to your Google Business Profile" prompt

@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { SettingsNav } from "@/components/dashboard/SettingsNav";
 import { BillingStatusCard } from "@/components/billing/BillingStatusCard";
+import { isMockTelephonyEnabled } from "@/lib/telephony/config";
 import type { Business } from "@/lib/supabase/types";
 
 interface BillingPageProps {
@@ -36,7 +37,7 @@ export default async function BillingSettingsPage({
           Manage your subscription and billing.
         </p>
       </div>
-      <SettingsNav />
+      <SettingsNav showSimulator={isMockTelephonyEnabled()} />
       <BillingStatusCard
         business={business}
         customerEmail={user.email}

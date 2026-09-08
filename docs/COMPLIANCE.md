@@ -24,7 +24,7 @@ Before reliably sending SMS to US numbers at volume, register a **Brand** and **
 Auto-texting after a missed call is generally defensible as responding to a communication the caller initiated, but guardrails are required:
 
 - Handle **STOP / UNSUBSCRIBE / CANCEL** and **HELP** keywords (Module 4)
-- Once opted out, **never auto-text again** until `START`/`UNSTOP`
+- Once opted out, **never auto-text that caller again for this business** until they reply `START`/`UNSTOP`. Opt-out is per business (`conversations.opted_out`), since each tenant sends from its own Reflex number.
 - Show consent notice during US onboarding (implemented in Module 2)
 - Link privacy policy on marketing site: `/privacy`
 

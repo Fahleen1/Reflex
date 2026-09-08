@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { formatPhoneDisplay } from "@/lib/utils/formatPhone";
+import { isSimulatedMessageSid } from "@/lib/telephony/config";
 
 export interface ThreadMessage {
   id: string;
@@ -11,6 +12,7 @@ export interface ThreadMessage {
   body: string;
   delivery_status: string | null;
   created_at: string;
+  message_sid?: string | null;
 }
 
 interface ConversationThreadProps {
@@ -112,6 +114,10 @@ export function ConversationThread({
                     {formatTime(message.created_at)}
                     {isOutbound && message.delivery_status
                       ? ` · ${message.delivery_status}`
+                      : ""}
+                    {message.message_sid &&
+                    isSimulatedMessageSid(message.message_sid)
+                      ? " · simulated"
                       : ""}
                   </p>
                 </div>

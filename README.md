@@ -175,6 +175,19 @@ Twilio must reach your app over HTTPS. For local dev, use [ngrok](https://ngrok.
 - [x] Privacy policy with SMS consent / STOP / HELP (`/privacy`)
 - [x] Basic SEO — meta tags, Open Graph image (`/opengraph-image`)
 
+### Mock telephony (free local testing)
+
+Set in `.env.local`:
+
+```env
+TELEPHONY_PROVIDER=mock
+```
+
+- Outbound SMS is simulated (`mock_SM…` SIDs) — no Twilio charges
+- **Settings → Simulator** (visible when mock is enabled): simulate missed/answered calls, customer replies, delivery failures
+- Live Twilio webhooks still require `TELEPHONY_PROVIDER=twilio` and valid Twilio credentials
+- Auto-text uses an **atomic claim** so duplicate webhooks cannot send two texts for one call
+
 ### Not yet built (deferred)
 
 - Sentry

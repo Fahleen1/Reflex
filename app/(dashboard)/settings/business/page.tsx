@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { SettingsNav } from "@/components/dashboard/SettingsNav";
 import { BusinessSettingsForm } from "@/components/dashboard/BusinessSettingsForm";
+import { isMockTelephonyEnabled } from "@/lib/telephony/config";
 import type { Business } from "@/lib/supabase/types";
 
 export default async function BusinessSettingsPage() {
@@ -29,7 +30,7 @@ export default async function BusinessSettingsPage() {
           Manage your business profile, hours, and message templates.
         </p>
       </div>
-      <SettingsNav />
+      <SettingsNav showSimulator={isMockTelephonyEnabled()} />
       <BusinessSettingsForm business={business} />
     </div>
   );

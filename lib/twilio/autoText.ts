@@ -1,5 +1,5 @@
 import { createServiceClient } from "@/lib/supabase/service";
-import { sendOutboundSms } from "@/lib/twilio/messaging";
+import { sendOutboundSms } from "@/lib/telephony/sendSms";
 import { renderMessageTemplate } from "@/lib/twilio/templates";
 import { isAutoTextCooldownActive } from "@/lib/utils/rateLimiting";
 import { formatPhoneDisplay } from "@/lib/utils/formatPhone";
@@ -29,43 +29,90 @@ function isCallerIdUnavailable(
   return callerNumber === null;
 }
 
+async function setSkipReasonAtomic(
+  callId: string,
+  reason: AutoTextSkipReason,
+): Promise<boolean> {
+  const supabase = createServiceClient();
+  const { data } = await supabase
+    .from("calls")
+    .update({ auto_text_skipped_reason: reason })
+    .eq("id", callId)
+    .eq("auto_text_sent", false)
+    .is("auto_text_skipped_reason", null)
+    .select("id")
+    .maybeSingle();
+
+  return !!data;
+}
+
+async function claimAutoTextSend(callId: string): Promise<boolean> {
+  const supabase = createServiceClient();
+  const { data } = await supabase
+    .from("calls")
+    .update({ auto_text_sent: true })
+    .eq("id", callId)
+    .eq("auto_text_sent", false)
+    .is("auto_text_skipped_reason", null)
+    .select("id")
+    .maybeSingle();
+
+  return !!data;
+}
+
+async function releaseAutoTextClaim(callId: string): Promise<void> {
+  const supabase = createServiceClient();
+  await supabase
+    .from("calls")
+    .update({ auto_text_sent: false })
+    .eq("id", callId)
+    .eq("auto_text_sent", true);
+}
+
+async function getAutoTextState(callId: string) {
+  const supabase = createServiceClient();
+  const { data } = await supabase
+    .from("calls")
+    .select("auto_text_sent, auto_text_skipped_reason, conversation_id")
+    .eq("id", callId)
+    .maybeSingle();
+
+  return data;
+}
+
 export async function sendMissedCallAutoText(
   business: Business,
   callId: string,
   callerNumber: string | null,
 ): Promise<AutoTextResult> {
-  const supabase = createServiceClient();
+  const existing = await getAutoTextState(callId);
 
-  const { data: callRow } = await supabase
-    .from("calls")
-    .select("auto_text_sent, auto_text_skipped_reason")
-    .eq("id", callId)
-    .maybeSingle();
-
-  if (callRow?.auto_text_sent) {
-    return { sent: true };
+  if (existing?.auto_text_sent) {
+    return {
+      sent: true,
+      conversationId: existing.conversation_id ?? undefined,
+    };
   }
 
-  if (callRow?.auto_text_skipped_reason) {
+  if (existing?.auto_text_skipped_reason) {
     return {
       sent: false,
-      skipReason: callRow.auto_text_skipped_reason as AutoTextSkipReason,
+      skipReason: existing.auto_text_skipped_reason as AutoTextSkipReason,
     };
   }
 
   if (isCallerIdUnavailable(business, callerNumber)) {
-    await supabase
-      .from("calls")
-      .update({ auto_text_skipped_reason: "caller_id_unavailable" })
-      .eq("id", callId);
+    await setSkipReasonAtomic(callId, "caller_id_unavailable");
     return { sent: false, skipReason: "caller_id_unavailable" };
   }
 
   if (!callerNumber) {
+    await setSkipReasonAtomic(callId, "caller_id_unavailable");
     return { sent: false, skipReason: "caller_id_unavailable" };
   }
 
   const resolvedCaller = callerNumber;
+  const supabase = createServiceClient();
 
   const { data: existingConversation } = await supabase
     .from("conversations")
@@ -75,10 +122,7 @@ export async function sendMissedCallAutoText(
     .maybeSingle();
 
   if (existingConversation?.opted_out) {
-    await supabase
-      .from("calls")
-      .update({ auto_text_skipped_reason: "opted_out" })
-      .eq("id", callId);
+    await setSkipReasonAtomic(callId, "opted_out");
     return { sent: false, skipReason: "opted_out" };
   }
 
@@ -87,25 +131,45 @@ export async function sendMissedCallAutoText(
     resolvedCaller,
   );
   if (cooldownActive) {
-    await supabase
-      .from("calls")
-      .update({ auto_text_skipped_reason: "cooldown_active" })
-      .eq("id", callId);
+    await setSkipReasonAtomic(callId, "cooldown_active");
     return { sent: false, skipReason: "cooldown_active" };
+  }
+
+  const claimed = await claimAutoTextSend(callId);
+  if (!claimed) {
+    const afterClaim = await getAutoTextState(callId);
+    if (afterClaim?.auto_text_sent) {
+      return {
+        sent: true,
+        conversationId: afterClaim.conversation_id ?? undefined,
+      };
+    }
+    if (afterClaim?.auto_text_skipped_reason) {
+      return {
+        sent: false,
+        skipReason: afterClaim.auto_text_skipped_reason as AutoTextSkipReason,
+      };
+    }
+    return { sent: false };
   }
 
   const body = renderMessageTemplate(business.message_template, {
     business_name: business.name,
   });
 
-  const message = await sendOutboundSms({
-    to: resolvedCaller,
-    body,
-    business,
-  });
+  let message;
+  try {
+    message = await sendOutboundSms({
+      to: resolvedCaller,
+      body,
+      business,
+    });
+  } catch (error) {
+    await releaseAutoTextClaim(callId);
+    throw error;
+  }
 
   const now = new Date().toISOString();
-
   let conversationId = existingConversation?.id;
 
   if (conversationId) {
@@ -138,6 +202,7 @@ export async function sendMissedCallAutoText(
   }
 
   if (!conversationId) {
+    await releaseAutoTextClaim(callId);
     throw new Error("Failed to resolve conversation for auto-text");
   }
 
@@ -151,13 +216,13 @@ export async function sendMissedCallAutoText(
   });
 
   if (messageError && !messageError.message.includes("duplicate")) {
+    await releaseAutoTextClaim(callId);
     throw messageError;
   }
 
   await supabase
     .from("calls")
     .update({
-      auto_text_sent: true,
       conversation_id: conversationId,
       auto_text_skipped_reason: null,
     })

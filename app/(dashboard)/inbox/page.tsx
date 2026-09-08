@@ -105,7 +105,7 @@ export default async function InboxPage({ searchParams }: InboxPageProps) {
       selectedConversation = conversation;
       const { data: messages } = await supabase
         .from("messages")
-        .select("id, direction, body, delivery_status, created_at")
+        .select("id, direction, body, delivery_status, created_at, message_sid")
         .eq("conversation_id", selectedId)
         .order("created_at", { ascending: true });
 

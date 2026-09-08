@@ -1,5 +1,5 @@
-import { getTwilioClient } from "@/lib/twilio/client";
 import type { Business } from "@/lib/supabase/types";
+import type { SendSmsResult } from "@/lib/telephony/types";
 
 export function getSmsStatusCallbackUrl(): string | undefined {
   const base = process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "");
@@ -13,17 +13,7 @@ export interface SendSmsOptions {
   business: Business;
 }
 
-export async function sendOutboundSms({ to, body, business }: SendSmsOptions) {
-  const twilio = getTwilioClient();
-  const messagingServiceSid = process.env.TWILIO_MESSAGING_SERVICE_SID;
-  const statusCallback = getSmsStatusCallbackUrl();
+/** @deprecated Import from `@/lib/telephony/sendSms` instead. */
+export { sendOutboundSms } from "@/lib/telephony/sendSms";
 
-  return twilio.messages.create({
-    to,
-    body,
-    ...(statusCallback ? { statusCallback } : {}),
-    ...(messagingServiceSid
-      ? { messagingServiceSid }
-      : { from: business.twilio_number! }),
-  });
-}
+export type { SendSmsResult };

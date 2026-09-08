@@ -32,7 +32,7 @@ The customer **initiates** the WhatsApp conversation (via `wa.me` or by saving t
 - [x] Onboarding: WhatsApp number + voice message + `wa.me` link
 - [x] Dashboard: WhatsApp info card (no SMS inbox)
 - [x] Call log (Module 3 — calls still logged via voice webhook)
-- [ ] Voice webhook `<Say>` branch for `market = 'pk'` (Module 3)
+- [x] Call log (Module 3 — calls logged via voice webhook or mock simulator)
 
 ## What we explicitly do NOT build in v1
 

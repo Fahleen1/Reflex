@@ -1,8 +1,8 @@
 import { createServiceClient } from "@/lib/supabase/service";
 import {
   buildPkVoiceAnnouncement,
-  sendMissedCallAutoText,
 } from "@/lib/twilio/autoText";
+import { handleUsMissedCallAutoText } from "@/lib/telephony/missedCall";
 import {
   lookupBusinessByTwilioNumber,
   twimlXmlResponse,
@@ -93,11 +93,6 @@ async function handleUsMissedCall(
   callId: string,
   callerNumber: string | null,
 ): Promise<Response> {
-  try {
-    await sendMissedCallAutoText(business, callId, callerNumber);
-  } catch (error) {
-    console.error("Twilio voice-status: auto-text failed", error);
-  }
-
+  await handleUsMissedCallAutoText(business, callId, callerNumber);
   return twimlXmlResponse(twimlEmpty());
 }
