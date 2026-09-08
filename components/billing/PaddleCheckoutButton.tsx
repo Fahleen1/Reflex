@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { initializePaddle, type Paddle } from "@paddle/paddle-js";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 
 interface PaddleCheckoutButtonProps {
@@ -13,80 +13,24 @@ interface PaddleCheckoutButtonProps {
   onCheckoutCompleted?: () => void;
 }
 
-let paddlePromise: Promise<Paddle | undefined> | null = null;
-
-function loadPaddle(): Promise<Paddle | undefined> {
-  if (!paddlePromise) {
-    const token = process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN;
-    if (!token) {
-      return Promise.resolve(undefined);
-    }
-    paddlePromise = initializePaddle({
-      token,
-      environment:
-        process.env.NEXT_PUBLIC_PADDLE_ENV === "production"
-          ? "production"
-          : "sandbox",
-    });
-  }
-  return paddlePromise;
-}
-
 export function PaddleCheckoutButton({
-  businessId,
-  customerEmail,
   label = "Start 14-day free trial",
   size = "md",
   className = "",
   onCheckoutCompleted,
 }: PaddleCheckoutButtonProps) {
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
-  const priceId = process.env.NEXT_PUBLIC_PADDLE_PRICE_ID;
   const configured = !!(
     process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN &&
-    priceId
+    process.env.NEXT_PUBLIC_PADDLE_PRICE_ID
   );
 
-  async function handleCheckout() {
-    if (!configured || !priceId) {
-      setError("Paddle is not configured. Add checkout env vars to continue.");
-      return;
-    }
-
+  function handleCheckout() {
     setLoading(true);
-    setError(null);
-
-    try {
-      const paddle = await loadPaddle();
-      if (!paddle) {
-        setError("Failed to load Paddle.js");
-        setLoading(false);
-        return;
-      }
-
-      const appUrl = window.location.origin;
-
-      paddle.Checkout.open({
-        items: [{ priceId, quantity: 1 }],
-        customData: { business_id: businessId },
-        ...(customerEmail
-          ? { customer: { email: customerEmail } }
-          : {}),
-        settings: {
-          successUrl: `${appUrl}/settings/billing?checkout=success`,
-          allowLogout: false,
-        },
-      });
-
-      onCheckoutCompleted?.();
-    } catch (err) {
-      console.error(err);
-      setError(err instanceof Error ? err.message : "Checkout failed");
-    } finally {
-      setLoading(false);
-    }
+    onCheckoutCompleted?.();
+    router.push("/settings/billing/checkout");
   }
 
   if (!configured) {
@@ -111,16 +55,13 @@ export function PaddleCheckoutButton({
   }
 
   return (
-    <div className="space-y-2">
-      <Button
-        size={size}
-        className={className}
-        loading={loading}
-        onClick={handleCheckout}
-      >
-        {label}
-      </Button>
-      {error && <p className="text-sm text-red-600">{error}</p>}
-    </div>
+    <Button
+      size={size}
+      className={className}
+      loading={loading}
+      onClick={handleCheckout}
+    >
+      {label}
+    </Button>
   );
 }

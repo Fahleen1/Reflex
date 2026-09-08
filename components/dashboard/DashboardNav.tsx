@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { Logo } from "@/components/ui/Logo";
 import type { Market } from "@/lib/supabase/types";
 
 interface DashboardNavProps {
@@ -32,12 +33,7 @@ export function DashboardNav({ market }: DashboardNavProps) {
     <header className="border-b border-slate-200/80 bg-white/80 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
         <div className="flex items-center gap-8">
-          <Link
-            href="/dashboard"
-            className="text-lg font-bold tracking-tight text-slate-950"
-          >
-            Reflex
-          </Link>
+          <Logo size="sm" href="/dashboard" />
           <nav className="hidden items-center gap-1 sm:flex">
             {navItems.map((item) => {
               const active =
@@ -67,7 +63,7 @@ export function DashboardNav({ market }: DashboardNavProps) {
         <button
           type="button"
           onClick={handleLogout}
-          className="text-sm font-medium text-slate-500 hover:text-slate-950"
+          className="cursor-pointer text-sm font-medium text-slate-500 hover:text-slate-950"
         >
           Sign out
         </button>

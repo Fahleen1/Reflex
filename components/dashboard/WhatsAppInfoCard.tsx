@@ -47,7 +47,7 @@ export function WhatsAppInfoCard({
           <Button
             variant="secondary"
             size="sm"
-            className="mt-3"
+            className="mt-3 cursor-pointer"
             onClick={() => handleCopy(waMeLink, "link")}
           >
             {copied === "link" ? "Copied!" : "Copy link"}

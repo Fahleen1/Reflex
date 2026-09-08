@@ -5,6 +5,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
+import { Logo } from "@/components/ui/Logo";
 
 function SignupForm() {
   const [email, setEmail] = useState("");
@@ -93,14 +94,9 @@ function SignupForm() {
       />
 
       <div className="relative w-full max-w-md">
-        <div className="mb-8 text-center">
-          <Link
-            href="/"
-            className="text-2xl font-bold tracking-tight text-slate-950"
-          >
-            Reflex
-          </Link>
-          <p className="mt-2 text-slate-600">Start your 14-day free trial</p>
+        <div className="mb-8 flex flex-col items-center text-center">
+          <Logo size="md" href="/" priority />
+          <p className="mt-4 text-slate-600">Start your 14-day free trial</p>
         </div>
 
         <div className="rounded-[1.75rem] border border-slate-200/80 bg-white/90 p-8 shadow-[0_20px_50px_-24px_rgba(79,70,229,0.35)] backdrop-blur">
@@ -134,7 +130,7 @@ function SignupForm() {
 
             <Button
               type="submit"
-              className="w-full !rounded-full !bg-slate-950 py-3 hover:!bg-slate-800 focus:!ring-slate-900 disabled:!bg-slate-400"
+              className="w-full cursor-pointer !rounded-full !bg-slate-950 py-3 hover:!bg-slate-800 focus:!ring-slate-900 disabled:!bg-slate-400"
               loading={loading}
             >
               Create account
@@ -152,7 +148,7 @@ function SignupForm() {
 
           <Button
             variant="secondary"
-            className="w-full !rounded-full border-slate-300 bg-white py-3 text-slate-950 hover:bg-slate-50 focus:!ring-slate-400"
+            className="w-full cursor-pointer !rounded-full border-slate-300 bg-white py-3 text-slate-950 hover:bg-slate-50 focus:!ring-slate-400"
             onClick={handleGoogleSignup}
             disabled={loading}
           >

@@ -273,7 +273,7 @@ export function BusinessSettingsForm({ business }: BusinessSettingsFormProps) {
         </p>
       )}
 
-      <Button type="submit" loading={loading}>
+      <Button type="submit" loading={loading} className="cursor-pointer">
         Save changes
       </Button>
     </form>

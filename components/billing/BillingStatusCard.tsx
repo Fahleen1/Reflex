@@ -62,7 +62,7 @@ export function BillingStatusCard({
           <Button
             variant="ghost"
             size="sm"
-            className="ml-2"
+            className="ml-2 cursor-pointer"
             onClick={() => router.refresh()}
           >
             Refresh
@@ -114,6 +114,7 @@ export function BillingStatusCard({
               variant="secondary"
               loading={portalLoading}
               onClick={openPortal}
+              className="cursor-pointer"
             >
               Manage billing in Paddle
             </Button>

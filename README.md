@@ -104,7 +104,8 @@ Twilio must reach your app over HTTPS. For local dev, use [ngrok](https://ngrok.
 ### Paddle billing setup (Module 6)
 
 1. Create a Paddle **sandbox** account and a product with a monthly price that includes a **14-day trial**.
-2. Copy into `.env.local`:
+2. In Paddle → **Checkout → Checkout settings**, set **Default payment link** to your app URL (e.g. `http://localhost:3000` for local dev). Sandbox: [checkout settings](https://sandbox-vendors.paddle.com/checkout-settings). Without this, checkout returns `transaction_default_checkout_url_not_set`.
+3. Copy into `.env.local`:
    ```env
    PADDLE_API_KEY=...
    PADDLE_WEBHOOK_SECRET=...          # from Developer Tools → Notifications
@@ -112,10 +113,10 @@ Twilio must reach your app over HTTPS. For local dev, use [ngrok](https://ngrok.
    NEXT_PUBLIC_PADDLE_PRICE_ID=pri_...
    NEXT_PUBLIC_PADDLE_ENV=sandbox
    ```
-3. Add a notification destination webhook URL: `{NEXT_PUBLIC_APP_URL}/api/paddle/webhook`  
+4. Add a notification destination webhook URL: `{NEXT_PUBLIC_APP_URL}/api/paddle/webhook`  
    Subscribe to `subscription.created`, `subscription.updated`, `subscription.canceled`, `subscription.past_due`.
-4. Ensure the price’s checkout passes `custom_data.business_id` (the app sets this automatically).
-5. Until these env vars are set, billing gating is **disabled** so local Module 1–5 testing still works.
+5. Ensure the price’s checkout passes `custom_data.business_id` (the app sets this automatically).
+6. Until these env vars are set, billing gating is **disabled** so local Module 1–5 testing still works.
 
 ### Module 1 checklist (spec)
 

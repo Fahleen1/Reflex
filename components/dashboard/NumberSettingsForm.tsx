@@ -139,7 +139,7 @@ export function NumberSettingsForm({ business }: NumberSettingsFormProps) {
             }
             required
           />
-          <Button type="submit" loading={loading}>
+          <Button type="submit" loading={loading} className="cursor-pointer">
             Update forwarding number
           </Button>
         </form>
@@ -186,7 +186,7 @@ export function NumberSettingsForm({ business }: NumberSettingsFormProps) {
                 </div>
               </label>
             ))}
-            <Button type="submit" loading={loading}>
+            <Button type="submit" loading={loading} className="cursor-pointer">
               Save caller ID mode
             </Button>
           </form>

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Logo } from "@/components/ui/Logo";
 
 export const metadata: Metadata = {
   title: {
@@ -33,12 +34,7 @@ function MarketingHeader() {
   return (
     <header className="relative z-30">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-5">
-        <Link
-          href="/"
-          className="text-xl font-bold tracking-tight text-slate-950"
-        >
-          Reflex
-        </Link>
+        <Logo size="sm" href="/" priority />
         <nav className="flex items-center gap-1 sm:gap-5">
           <Link
             href="/"
@@ -82,7 +78,7 @@ function MarketingFooter() {
       <div className="mx-auto flex min-h-[22rem] w-full max-w-6xl flex-col justify-between px-8 py-12 sm:min-h-[26rem] sm:px-12 sm:py-16">
         <div className="flex flex-col gap-10 sm:flex-row sm:items-start sm:justify-between">
           <div className="max-w-sm">
-            <p className="text-2xl font-bold text-slate-950">Reflex</p>
+            <Logo size="lg" href="/" />
             <p className="mt-3 text-sm leading-relaxed text-slate-700">
               Missed-call follow-up for local service businesses—SMS in the US,
               WhatsApp pointers in Pakistan.

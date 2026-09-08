@@ -265,7 +265,7 @@ export function OnboardingWizard({
               options={timezoneOptions}
             />
             <Button
-              className="w-full"
+              className="w-full cursor-pointer"
               onClick={() => setStep(2)}
               disabled={!data.name.trim()}
             >
@@ -311,11 +311,11 @@ export function OnboardingWizard({
               </label>
             </div>
             <div className="flex gap-3">
-              <Button variant="secondary" onClick={() => setStep(1)}>
+              <Button variant="secondary" onClick={() => setStep(1)} className="cursor-pointer">
                 Back
               </Button>
               <Button
-                className="flex-1"
+                className="flex-1 cursor-pointer"
                 onClick={() => setStep(3)}
                 disabled={!data.forwardingNumber.trim() || !data.consentAccepted}
               >
@@ -372,11 +372,11 @@ export function OnboardingWizard({
               </p>
             </div>
             <div className="flex gap-3">
-              <Button variant="secondary" onClick={() => setStep(1)}>
+              <Button variant="secondary" onClick={() => setStep(1)} className="cursor-pointer">
                 Back
               </Button>
               <Button
-                className="flex-1"
+                className="flex-1 cursor-pointer"
                 onClick={() => setStep(3)}
                 disabled={
                   !data.forwardingNumber.trim() || !data.whatsappNumber.trim()
@@ -441,11 +441,11 @@ export function OnboardingWizard({
               );
             })}
             <div className="flex gap-3 pt-4">
-              <Button variant="secondary" onClick={() => setStep(2)}>
+              <Button variant="secondary" onClick={() => setStep(2)} className="cursor-pointer">
                 Back
               </Button>
               <Button
-                className="flex-1"
+                className="flex-1 cursor-pointer"
                 loading={loading}
                 onClick={handleSaveBusiness}
               >
@@ -512,11 +512,11 @@ export function OnboardingWizard({
               ))}
             </div>
             <div className="flex gap-3">
-              <Button variant="secondary" onClick={() => setStep(3)}>
+              <Button variant="secondary" onClick={() => setStep(3)} className="cursor-pointer">
                 Back
               </Button>
               <Button
-                className="flex-1"
+                className="flex-1 cursor-pointer"
                 loading={loading}
                 onClick={handleSaveCallerIdMode}
               >
@@ -635,7 +635,7 @@ export function OnboardingWizard({
             )}
 
             <Button
-              className="w-full"
+              className="w-full cursor-pointer"
               variant="secondary"
               onClick={() => {
                 router.push(

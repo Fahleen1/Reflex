@@ -169,16 +169,16 @@ export default async function DashboardPage() {
       <div className="flex gap-3">
         {!isPk && (
           <Link href="/inbox">
-            <Button variant="secondary">View inbox</Button>
+            <Button variant="secondary" className="cursor-pointer">View inbox</Button>
           </Link>
         )}
         <Link href="/settings/business">
-          <Button variant={isPk ? "secondary" : "ghost"}>
+          <Button variant={isPk ? "secondary" : "ghost"} className="cursor-pointer">
             Business settings
           </Button>
         </Link>
         <Link href="/settings/number">
-          <Button variant="ghost">Phone number</Button>
+          <Button variant="ghost" className="cursor-pointer">Phone number</Button>
         </Link>
       </div>
     </div>

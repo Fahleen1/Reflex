@@ -15,6 +15,7 @@ const ALLOWED_WHEN_BLOCKED = [
   "/settings/billing",
   "/settings/business",
   "/settings/number",
+  "/settings/simulator",
   "/onboarding",
 ];
 

@@ -145,7 +145,7 @@ export function ConversationThread({
             disabled={optedOut || loading}
             className="flex-1 rounded-2xl border border-slate-200 px-3 py-2 text-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400 disabled:bg-gray-50"
           />
-          <Button type="submit" disabled={optedOut || loading || !reply.trim()}>
+          <Button type="submit" disabled={optedOut || loading || !reply.trim()} className="cursor-pointer">
             Send
           </Button>
         </div>

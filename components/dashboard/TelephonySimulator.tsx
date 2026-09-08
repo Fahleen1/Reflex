@@ -73,6 +73,7 @@ export function TelephonySimulator({
           />
           <div className="flex flex-wrap gap-3">
             <Button
+              className="cursor-pointer"
               loading={loading === "missed"}
               disabled={!!loading}
               onClick={() =>
@@ -86,6 +87,7 @@ export function TelephonySimulator({
             </Button>
             <Button
               variant="secondary"
+              className="cursor-pointer"
               loading={loading === "answered"}
               disabled={!!loading}
               onClick={() =>
@@ -140,6 +142,7 @@ export function TelephonySimulator({
                 onChange={(e) => setReplyBody(e.target.value)}
               />
               <Button
+                className="cursor-pointer"
                 loading={loading === "reply"}
                 disabled={!!loading || !conversationId}
                 onClick={() =>
@@ -160,6 +163,7 @@ export function TelephonySimulator({
           >
             <Button
               variant="secondary"
+              className="cursor-pointer"
               loading={loading === "fail"}
               disabled={!!loading || !conversationId}
               onClick={async () => {
