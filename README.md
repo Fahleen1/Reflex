@@ -1,214 +1,218 @@
-# Reflex — Missed Call Text-Back SaaS
+# Reflex
 
-Never lose a missed call lead. Automatically reach callers when you can't pick up — via **SMS (US)** or **WhatsApp voice pointer (Pakistan)**.
+**Never lose a missed-call lead.** Reflex helps local service businesses (plumbers, salons, HVAC, detailers, and similar) recover conversations when they cannot answer the phone.
 
-> **Spec:** This project follows [PROJECT_SPEC v3.2](docs/PROJECT_SPEC.md) (dual-track: US SMS + Pakistan WhatsApp).
+When a call goes unanswered, Reflex reacts automatically so the caller is not lost to the next listing on Google. How that works depends on the business market:
 
-## Two parallel tracks (v3)
-
-| | **Track A — US** | **Track B — Pakistan** |
+| | **United States** | **Pakistan** |
 |---|---|---|
-| **Mechanic** | Auto-SMS after missed call | Voice announcement → `wa.me` WhatsApp link |
-| **Telephony** | Twilio Voice + Messaging | Twilio Voice only (no SMS in PK) |
-| **Replies** | Dashboard inbox (Module 4) | Owner's WhatsApp app (outside dashboard) |
-| **Compliance** | A2P 10DLC + TCPA ([docs/COMPLIANCE.md](docs/COMPLIANCE.md)) | Customer-initiated WhatsApp ([docs/PAKISTAN_TRACK.md](docs/PAKISTAN_TRACK.md)) |
-| **`businesses.market`** | `'us'` | `'pk'` |
+| **After a missed call** | Sends an automatic SMS to the caller | Plays a short voice message with your WhatsApp number |
+| **Customer replies** | SMS thread in the Reflex dashboard | Customer messages you on WhatsApp (in your WhatsApp app) |
+| **Telephony** | Twilio Voice + Messaging | Twilio Voice only (no SMS in Pakistan) |
+| **Compliance notes** | [docs/COMPLIANCE.md](docs/COMPLIANCE.md) (A2P 10DLC, STOP/HELP) | [docs/PAKISTAN_TRACK.md](docs/PAKISTAN_TRACK.md) (customer-initiated WhatsApp) |
 
-Both tracks share auth, dashboard, billing (Paddle), and call logging.
+Both tracks share the same app: auth, onboarding, call log, settings, and subscription billing (Paddle, 14-day trial).
 
-## Getting started
+---
 
-### Prerequisites
+## What you get
 
-- Node.js 18+
-- [Supabase](https://supabase.com) project
-- [Twilio](https://twilio.com) account (voice for both tracks; messaging for US only)
+- **Marketing site** — landing, pricing, privacy
+- **Auth** — email/password and Google (Supabase)
+- **Onboarding** — choose US or Pakistan, business profile, phone/WhatsApp setup
+- **Dashboard** — recent calls, stats, market-specific inbox or WhatsApp info
+- **US inbox** — two-way SMS, opt-out keywords (STOP/HELP/START), owner email alerts (Resend)
+- **Billing** — Paddle checkout, webhooks, subscription gating
+- **Local simulator** — test missed calls and (US) mock SMS without Twilio charges
 
-### Setup
+For architecture and product rules, see [docs/PROJECT_SPEC.md](docs/PROJECT_SPEC.md).
 
-1. **Install dependencies**
+---
 
-   ```bash
-   npm install
-   ```
+## Tech stack
 
-2. **Configure environment**
+- **App:** Next.js (App Router), TypeScript, Tailwind CSS
+- **Database & auth:** Supabase (PostgreSQL + RLS)
+- **Telephony:** Twilio Voice; Messaging for US SMS
+- **Billing:** Paddle
+- **Email:** Resend (optional, for reply alerts)
 
-   ```bash
-   cp .env.local.example .env.local
-   ```
+---
 
-   Fill in Supabase URL and keys (Settings → API in Supabase dashboard).
+## Prerequisites
 
-3. **Run database migrations** (in order)
+- Node.js 20+ (recommended for Next.js 16)
+- A [Supabase](https://supabase.com) project
+- [Twilio](https://twilio.com) account for live voice/SMS (optional if using mock telephony locally)
+- [Paddle](https://paddle.com) sandbox for billing (optional locally — gating is off until Paddle env vars are set)
 
-   ```text
-   supabase/migrations/20250831000000_initial_schema.sql
-   supabase/migrations/20250831120000_v3_pakistan_track.sql
-   ```
+---
 
-   Paste into the Supabase SQL Editor, or use `supabase db push`.
+## Local setup
 
-4. **Enable Google OAuth** (optional)
+### 1. Install and configure env
 
-   Supabase → Authentication → Providers → Google.  
-   Redirect URL: `http://localhost:3000/api/auth/callback`
-
-5. **Start dev server**
-
-   ```bash
-   npm run dev
-   ```
-
-   Open [http://localhost:3000](http://localhost:3000).
-
-### Twilio
-
-Add to `.env.local`:
-
-```env
-TWILIO_ACCOUNT_SID=
-TWILIO_AUTH_TOKEN=
-TWILIO_MESSAGING_SERVICE_SID=   # US SMS only (Module 3+)
-NEXT_PUBLIC_APP_URL=http://localhost:3000
+```bash
+git clone <your-repo-url>
+cd Reflex
+npm install
+cp .env.local.example .env.local
 ```
 
-- **US track:** Provisions a US local number during onboarding; start [A2P 10DLC registration](docs/COMPLIANCE.md) immediately — often the launch critical path.
-- **Pakistan track:** Uses Twilio Voice for call detection only; no SMS provisioning needed.
+Fill in `.env.local`. Minimum to run the app and sign in:
 
-## Project status (Modules 1–7 vs spec v3.2)
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://YOUR_PROJECT.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=...
+SUPABASE_SERVICE_ROLE_KEY=...
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+TELEPHONY_PROVIDER=mock
+```
 
-| Module | Status | Notes |
-|--------|--------|-------|
-| **1** Setup & Auth | ✅ Done | Next.js, Supabase auth (email + Google), middleware, RLS, `docs/COMPLIANCE.md` |
-| **2** Onboarding | ✅ Done | Dual-track wizard (`market` US/PK), caller-ID test (US), WhatsApp + voice message (PK) |
-| **3** Voice webhooks | ✅ Done | `/api/twilio/voice`, `/api/twilio/voice-status`, US auto-SMS + PK voice `<Say>`, call log on dashboard |
-| **4** SMS inbox | ✅ Done | Inbound SMS webhook, STOP/HELP/START, inbox UI, owner email alerts, delivery status |
-| **5** Settings | ✅ Done | Edit profile/hours/template, phone + caller-ID re-test, dashboard stats |
-| **6** Billing | ✅ Done | Paddle checkout, webhooks, access gating, Settings → Billing |
-| **7** Marketing | ✅ Done | Invofy-style landing (Reflex brand, blue–purple gradients, chat demo), pricing, privacy, SEO/OG |
+Use the Supabase **project URL** (no `/rest/v1/` suffix).
 
-### Testing Module 3 (Twilio voice webhooks)
+### 2. Database migrations
 
-Twilio must reach your app over HTTPS. For local dev, use [ngrok](https://ngrok.com) or deploy to Vercel first.
+Run these in order in the Supabase **SQL Editor** (or `supabase db push` if you use the CLI):
 
-1. Set `NEXT_PUBLIC_APP_URL` to your public URL (e.g. `https://abc123.ngrok.io` — no trailing slash).
-2. In **Twilio Console → Phone Numbers → your number → Voice**, set:
-   - **A call comes in:** Webhook → `{NEXT_PUBLIC_APP_URL}/api/twilio/voice` (HTTP POST)
-3. Ensure `SUPABASE_SERVICE_ROLE_KEY` is set (webhooks write via service role).
-4. Call your Twilio number from another phone; don't answer the forwarded line (voicemail off).
-5. Check **Twilio Debugger** for webhook requests and the dashboard **Recent calls** table.
+1. `supabase/migrations/20250831000000_initial_schema.sql`
+2. `supabase/migrations/20250831120000_v3_pakistan_track.sql`
+3. `supabase/migrations/20250901120000_module4_inbox_rls.sql`
 
-**US SMS** also requires `TWILIO_MESSAGING_SERVICE_SID` and A2P 10DLC approval. Voice + call logging works without 10DLC.
+### 3. Google sign-in (optional)
 
-### Paddle billing setup (Module 6)
+**Google Cloud Console** → OAuth client (Web application):
 
-1. Create a Paddle **sandbox** account and a product with a monthly price that includes a **14-day trial**.
-2. In Paddle → **Checkout → Checkout settings**, set **Default payment link** to your app URL (e.g. `http://localhost:3000` for local dev). Sandbox: [checkout settings](https://sandbox-vendors.paddle.com/checkout-settings). Without this, checkout returns `transaction_default_checkout_url_not_set`.
-3. Copy into `.env.local`:
-   ```env
-   PADDLE_API_KEY=...
-   PADDLE_WEBHOOK_SECRET=...          # from Developer Tools → Notifications
-   NEXT_PUBLIC_PADDLE_CLIENT_TOKEN=...
-   NEXT_PUBLIC_PADDLE_PRICE_ID=pri_...
-   NEXT_PUBLIC_PADDLE_ENV=sandbox
-   ```
-4. Add a notification destination webhook URL: `{NEXT_PUBLIC_APP_URL}/api/paddle/webhook`  
-   Subscribe to `subscription.created`, `subscription.updated`, `subscription.canceled`, `subscription.past_due`.
-5. Ensure the price’s checkout passes `custom_data.business_id` (the app sets this automatically).
-6. Until these env vars are set, billing gating is **disabled** so local Module 1–5 testing still works.
+- **Authorized JavaScript origins:** `http://localhost:3000` (and your production URL later)
+- **Authorized redirect URIs:** `https://YOUR_PROJECT.supabase.co/auth/v1/callback`  
+  (Not your app URL — Supabase receives Google’s redirect first.)
 
-### Module 1 checklist (spec)
+**Supabase** → Authentication:
 
-- [x] Next.js + TypeScript + Tailwind
-- [x] Supabase migrations + RLS from day one
-- [x] Email + Google OAuth, auth-guarded dashboard
-- [x] `docs/COMPLIANCE.md`
-- [ ] **Manual:** Submit A2P 10DLC brand/campaign in Twilio (Track A only)
+- **Providers → Google:** enable, paste Client ID and Secret
+- **URL configuration:**
+  - **Site URL:** `http://localhost:3000` (or production URL)
+  - **Redirect URLs:** add  
+    `http://localhost:3000/**`  
+    and your production `https://your-domain/**`
 
-### Module 2 checklist (spec v3.2)
+The app completes login at `/api/auth/callback`.
 
-- [x] Market selection (`us` / `pk`)
-- [x] **US:** forwarding number, business hours, timezone, SMS consent, Twilio number, caller-ID test
-- [x] **PK:** WhatsApp number, voice message, `wa.me` link, skip caller-ID/SMS consent
-- [x] Save to `businesses` (`market`, `whatsapp_number`, `missed_call_voice_message`)
-- [x] Dashboard: hide SMS inbox for PK; show WhatsApp info card
-- [ ] **Manual:** US test call to confirm `caller_id_mode` before relying on auto-text
+### 4. Run the dev server
 
-### Module 6 checklist (spec v3.2)
+```bash
+npm run dev
+```
 
-- [x] Paddle checkout during onboarding (after business profile)
-- [x] `/api/paddle/webhook` — signature verify, idempotent `billing_events`, subscription sync
-- [x] Access gating via `subscription_status` + `paddle_subscription_id`
-- [x] Settings → Billing (status, checkout, customer portal)
-- [x] Pricing page notes Paddle trial
-- [ ] **Manual:** Create Paddle sandbox product/price with 14-day trial; set env vars; point webhook to `{APP_URL}/api/paddle/webhook`
+Open [http://localhost:3000](http://localhost:3000).
 
-### Module 5 checklist (spec v3.2)
+---
 
-- [x] Edit business profile, hours, timezone
-- [x] Edit SMS template (US) with `{business_name}` docs / voice + WhatsApp (PK)
-- [x] Update forwarding number + re-trigger caller-ID verification (US)
-- [x] Dashboard stats: missed calls, response rate, skipped/undelivered
-- [x] Settings sub-nav: Business · Phone number
+## Environment variables
 
-### Module 4 checklist (spec v3.2)
+| Variable | Purpose |
+|----------|---------|
+| `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Public anon key |
+| `SUPABASE_SERVICE_ROLE_KEY` | Server/webhooks only — never expose to the browser |
+| `NEXT_PUBLIC_APP_URL` | Public app URL (no trailing slash); used for Twilio/Paddle webhooks |
+| `TELEPHONY_PROVIDER` | `mock` (local, free) or `twilio` (live) |
+| `TWILIO_ACCOUNT_SID` / `TWILIO_AUTH_TOKEN` | Live telephony |
+| `TWILIO_MESSAGING_SERVICE_SID` | US outbound SMS (requires A2P 10DLC) |
+| `PADDLE_*` / `NEXT_PUBLIC_PADDLE_*` | Billing; see below |
+| `RESEND_API_KEY` / `RESEND_FROM_EMAIL` | Optional owner alerts on new SMS replies |
 
-- [x] `/api/twilio/sms` — STOP/UNSUBSCRIBE/CANCEL, HELP, START/UNSTOP, inbound messages
-- [x] `/api/twilio/sms-status` — delivery status updates
-- [x] Dashboard inbox — conversation list, thread view, reply box
-- [x] `POST /api/messages` — send reply via Twilio
-- [x] Owner email alert on new inbound reply (Resend)
-- [ ] **Manual:** Configure Resend domain + `RESEND_API_KEY` / `RESEND_FROM_EMAIL`
+Full template: [.env.local.example](.env.local.example).
 
-### Module 3 checklist (spec v3.2)
+---
 
-- [x] `/api/twilio/voice` — signature validation, call logging, Dial TwiML
-- [x] `/api/twilio/voice-status` — market branch (US auto-SMS / PK voice `<Say>`)
-- [x] ParentCallSid caller resolution, cooldown, opt-out, caller-ID guards (US)
-- [x] Dashboard call log with skip reasons
-- [ ] **Manual:** Configure Twilio voice webhook URL + end-to-end test call
-
-### Module 7 checklist (spec v3.2)
-
-- [x] Landing — headline, problem/solution, animated demo, CTA to trial
-- [x] Pricing page (`/pricing`)
-- [x] Privacy policy with SMS consent / STOP / HELP (`/privacy`)
-- [x] Basic SEO — meta tags, Open Graph image (`/opengraph-image`)
-
-### Mock telephony (free local testing)
-
-Set in `.env.local`:
+## Mock telephony (recommended for local dev)
 
 ```env
 TELEPHONY_PROVIDER=mock
 ```
 
-- Outbound SMS is simulated (`mock_SM…` SIDs) — no Twilio charges
-- **Settings → Simulator** (visible when mock is enabled): simulate missed/answered calls, customer replies, delivery failures
-- Live Twilio webhooks still require `TELEPHONY_PROVIDER=twilio` and valid Twilio credentials
-- Auto-text uses an **atomic claim** so duplicate webhooks cannot send two texts for one call
+- No Twilio charges; outbound SMS uses simulated SIDs
+- **Settings → Simulator** — missed/answered calls; US track can simulate replies and delivery failures
+- Switch to `TELEPHONY_PROVIDER=twilio` and set Twilio credentials for real calls
 
-### Not yet built (deferred)
+---
 
-- Sentry
-- `supabase/seed.sql`
-- Module 8 post-MVP nice-to-haves (see [PROJECT_SPEC](docs/PROJECT_SPEC.md))
-## Docs
+## Live Twilio (voice and US SMS)
+
+Twilio must reach your app over **HTTPS**. For local testing, use [ngrok](https://ngrok.com) or deploy first.
+
+1. Set `NEXT_PUBLIC_APP_URL` to your public URL (e.g. `https://abc123.ngrok-free.app`).
+2. Set `TELEPHONY_PROVIDER=twilio` and Twilio credentials.
+3. **Phone number → Voice:** webhook `{NEXT_PUBLIC_APP_URL}/api/twilio/voice` (POST).
+4. Ensure `SUPABASE_SERVICE_ROLE_KEY` is set (webhooks use the service role).
+5. Place a test call; check Twilio Debugger and **Dashboard → Recent calls**.
+
+US **SMS auto-text** also needs `TWILIO_MESSAGING_SERVICE_SID` and [A2P 10DLC](docs/COMPLIANCE.md) approval. Voice and call logging work without 10DLC.
+
+**Pakistan:** voice + missed-call announcement only; no SMS. Customers reach you via WhatsApp after the voice prompt.
+
+---
+
+## Paddle billing
+
+1. Create a Paddle **sandbox** product with a monthly price and **14-day trial**.
+2. **Checkout → Checkout settings:** set **Default payment link** to your app URL (e.g. `http://localhost:3000`).  
+   Sandbox: [checkout settings](https://sandbox-vendors.paddle.com/checkout-settings).
+3. Add to `.env.local`:
+
+   ```env
+   PADDLE_API_KEY=...
+   PADDLE_WEBHOOK_SECRET=...
+   NEXT_PUBLIC_PADDLE_CLIENT_TOKEN=...
+   NEXT_PUBLIC_PADDLE_PRICE_ID=pri_...
+   NEXT_PUBLIC_PADDLE_ENV=sandbox
+   ```
+
+4. **Developer Tools → Notifications:** webhook `{NEXT_PUBLIC_APP_URL}/api/paddle/webhook`  
+   Events: `subscription.created`, `subscription.updated`, `subscription.canceled`, `subscription.past_due`.
+5. Webhook **secret** must match `PADDLE_WEBHOOK_SECRET` in env (restart the app after changes).
+
+Until Paddle env vars are set, subscription gating is **disabled** so you can develop without checkout.
+
+---
+
+## Deploying (Netlify)
+
+This app is **Next.js with server routes and API handlers**, not a static export.
+
+- **Framework preset:** Next.js  
+- **Build command:** `npm run build`  
+- **Publish directory:** leave empty (do not use `public` or `.next` alone)  
+- **Node:** 20+  
+- Set the same env vars as production in Netlify, especially `NEXT_PUBLIC_APP_URL` and Supabase keys  
+- Update Supabase **Site URL** and **Redirect URLs** for your Netlify domain  
+- Optional: add `@netlify/plugin-nextjs` via `netlify.toml` if auto-detection fails  
+
+Run `npm run build` locally before pushing; fix any TypeScript errors the build reports.
+
+---
+
+## Scripts
+
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Development server (Turbopack) |
+| `npm run build` | Production build |
+| `npm run start` | Run production build locally |
+| `npm run lint` | ESLint |
+
+---
+
+## Documentation
 
 | File | Purpose |
 |------|---------|
-| [docs/PROJECT_SPEC.md](docs/PROJECT_SPEC.md) | Authoritative spec (v3.2) |
-| [docs/COMPLIANCE.md](docs/COMPLIANCE.md) | US SMS / A2P 10DLC / TCPA |
-| [docs/PAKISTAN_TRACK.md](docs/PAKISTAN_TRACK.md) | Pakistan WhatsApp-pointer track (Section 2b) |
+| [docs/PROJECT_SPEC.md](docs/PROJECT_SPEC.md) | Full product and technical spec |
+| [docs/COMPLIANCE.md](docs/COMPLIANCE.md) | US SMS, TCPA, A2P 10DLC |
+| [docs/PAKISTAN_TRACK.md](docs/PAKISTAN_TRACK.md) | Pakistan WhatsApp-pointer flow |
 
-## Tech stack
-
-- **Frontend:** Next.js 15, TypeScript, Tailwind CSS
-- **Backend:** Next.js API routes
-- **Database:** PostgreSQL via Supabase (RLS enabled)
-- **Auth:** Supabase Auth
-- **Telephony:** Twilio Programmable Voice (+ Messaging for US)
+---
 
 ## License
 
